@@ -2,67 +2,67 @@ require 'spec_helper'
 
 module Refinery
   describe Page do
-    it "can have images added" do
+    it "can have resources added" do
       page = Factory(:page)
-      page.images.count.should eq(0)
+      page.resources.count.should eq(0)
 
-      page.images << Factory(:image)
-      page.images.count.should eq(1)
+      page.resources << Factory(:resource)
+      page.resources.count.should eq(1)
     end
 
-    describe "#images_attributes=" do
-      it "adds images" do
+    describe "#resources_attributes=" do
+      it "adds resources" do
         page = Factory(:page)
-        image = Factory(:image)
+        resource = Factory(:resource)
 
-        page.images.count.should == 0
-        page.update_attributes({:images_attributes => {"0" => {"id" => image.id}}})
+        page.resources.count.should == 0
+        page.update_attributes({:resources_attributes => {"0" => {"id" => resource.id}}})
 
-        page.images.count.should == 1
+        page.resources.count.should == 1
       end
 
-      it "deletes specific images" do
+      it "deletes specific resources" do
         page = Factory(:page)
-        images = [Factory(:image), Factory(:image)]
-        page.images = images
+        resources = [Factory(:resource), Factory(:resource)]
+        page.resources = resources
 
-        page.update_attributes(:images_attributes => {
+        page.update_attributes(:resources_attributes => {
           "0" => {
-            "id" => images.first.id.to_s,
-            "image_page_id" => page.image_pages.first.id,
+            "id" => resources.first.id.to_s,
+            "resource_page_id" => page.resource_pages.first.id,
           },
         })
 
-        page.images.should eq([images.first])
+        page.resources.should eq([resources.first])
       end
 
-      it "deletes all images" do
+      it "deletes all resources" do
         page = Factory(:page)
-        images = [Factory(:image), Factory(:image)]
-        page.images = images
+        resources = [Factory(:resource), Factory(:resource)]
+        page.resources = resources
 
-        page.update_attributes(:images_attributes => {"0" => {"id"=>""}})
+        page.update_attributes(:resources_attributes => {"0" => {"id"=>""}})
 
-        page.images.should be_empty
+        page.resources.should be_empty
       end
 
-      it "reorders images" do
+      it "reorders resources" do
         page = Factory(:page)
-        images = [Factory(:image), Factory(:image)]
-        page.images = images
+        resources = [Factory(:resource), Factory(:resource)]
+        page.resources = resources
 
-        page.update_attributes(:images_attributes => {
+        page.update_attributes(:resources_attributes => {
           "0" => {
-            "id" => images.second.id,
-            "image_page_id" => page.image_pages.second.id,
+            "id" => resources.second.id,
+            "resource_page_id" => page.resource_pages.second.id,
           },
           "1" => {
-            "id" => images.first.id,
-            "image_page_id" => page.image_pages.first.id,
+            "id" => resources.first.id,
+            "resource_page_id" => page.resource_pages.first.id,
           },
         })
 
-        page.images.should eq([images.second, images.first])
+        page.resources.should eq([resources.second, resources.first])
       end
     end
   end
