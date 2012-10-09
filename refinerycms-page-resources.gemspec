@@ -15,5 +15,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency    'refinerycms-pages', '~> 2.0.3'
 =======
->>>>>>> Changed all mentions of image to resource (and Image to Resource)
+>>>>>>> Changed all mentions of image to resource
 end
