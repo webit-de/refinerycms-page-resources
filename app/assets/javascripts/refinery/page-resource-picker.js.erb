@@ -1,8 +1,6 @@
 (function (refineryPicker, $, undefined) {
 
-  // var picker;
-  // var config ={};
-    var collection,       // name for a collection
+     var collection,       // name for a collection
         single,           // name for a singular
         resTab,
         resPicker;
@@ -15,7 +13,7 @@
     var actions =  "<img src='/assets/refinery/icons/delete.png' width='16' height='16' class='_delete' />" +
                    "<img src='/assets/refinery/icons/user_comment.png' width='16' height='16' class='_caption' />";
     var res_caption_html = "<div class='form-actions'><div class='form-actions-left'>" + 
-                           "<a class='button'><%= I18n.t('refinery.js.admin.resource_pages.done') %></a></div></div>";
+                           "<a class='button'><%= I18n.t('refinery.js.admin.page_resources.done') %></a></div></div>";
     
 /*
  * ----------------------------------------------------
@@ -37,7 +35,7 @@
             $(this).parents('li').first().remove();
             reindex_resources();
           });
-    resActions.find('._caption').click(function(){open_resource_caps});                 
+    resActions.find('._caption').click(function(){open_resource_caps(this)});                 
 
     resTab.find('a').click(function(){
       if (!(picker = resPicker).data('size-applied')){
@@ -63,7 +61,6 @@
   // they ignore the new contents. This is fixed below by adding a hidden
   // field that stays in place.
     resCollection.find('li textarea').filter(":hidden").each(function(index) {
-      console.log (this.name);
       var old_name = $(this).attr('name');
       $(this).attr('data-old-id', $(this).attr('id'));
       $(this).attr('name', 'ignore_me_' + index);
@@ -118,9 +115,11 @@
       })
     })
   } //end of reindex_resources
-  open_resource_caps = function(e) {
+
+  open_resource_caps = function(obj) {
+    icon = $(obj);
     // move the textarea out of the list item, and then move the textarea back into it when we click done.
-    (list_item = $(this).parents('li').first()).addClass('current_caption_list_item');
+    (list_item = icon.parents('li').first()).addClass('current_caption_list_item');
     textarea = list_item.find('.textarea_wrapper_for_wym > textarea');
   
     textarea.after($(res_caption_html));
@@ -135,24 +134,26 @@
   
     $('.ui-dialog:visible .ui-dialog-titlebar-close, .ui-dialog:visible .form-actions a.button')
       .on('click',
-        $.proxy(function(e) {
+        $.proxy(function() {
+          
           // first, update the editor because we're blocking event bubbling (third argument to bind set to false).
           $(this).data('wymeditor').update();
           $(this).removeClass('wymeditor')
                  .removeClass('active_rotator_wymeditor');
   
-          $this_parent = $(this).parent();
-          $this_parent.appendTo('li.current_caption_list_item').dialog('close').data('dialog', null);
-          $this_parent.find('.form-actions').remove();
-          $this_parent.find('.wym_box').remove();
-          $this_parent.css('height', 'auto');
-          $this_parent.removeClass('ui-dialog-content').removeClass('ui-widget-content');
+          objParent = $(this).parent();
+          objParent.appendTo('li.current_caption_list_item').dialog('close').data('dialog', null);
+          objParent.find('.form-actions').remove();
+          objParent.find('.wym_box').remove();
+          objParent.css('height', 'auto');
+          objParent.removeClass('ui-dialog-content').removeClass('ui-widget-content');
   
           $('li.current_caption_list_item').removeClass('current_caption_list_item');
   
           $('.ui-dialog, .ui-widget-overlay:visible').remove();
   
           $('#' + $(this).attr('data-old-id')).val($(this).val());
+          console.log()
         }, textarea)
       );
   
@@ -172,18 +173,6 @@
       , stop: reindex_resources
     });
 
-//    resCollection.find('li:not(.empty_resource)').on('hover', function(e) {
-//      if (e.type == 'mouseenter' || e.type == 'mouseover') {
-//        if ($(this).find('.actions').length == 0) {
-//          resActions.clone().appendTo(this);
-//        } else {
-//          resActions.clone().addClass('no_captions').appendTo(this);
-//        }
-//        resActions.show();
-//      } else if (e.type == 'mouseleave' || e.type == 'mouseout') {
-//        $(this).find('.actions').hide();
-//      }
-//    });
     /*
      * Add actions to each resource. Don't fuss with the hovering bit right now.
      */
