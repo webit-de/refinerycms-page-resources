@@ -13,7 +13,7 @@
     
 //     the delete icon and the add caption icon
     var actions =  "<img src='/assets/refinery/icons/delete.png' width='16' height='16' class='_delete' />" +
-                   "<img src='/assets/refinery/icons/user_comment.png' width='16' height='16' class='caption' />";
+                   "<img src='/assets/refinery/icons/user_comment.png' width='16' height='16' class='_caption' />";
     var res_caption_html = "<div class='form-actions'><div class='form-actions-left'>" + 
                            "<a class='button'><%= I18n.t('refinery.js.admin.resource_pages.done') %></a></div></div>";
     
@@ -37,7 +37,7 @@
             $(this).parents('li').first().remove();
             reindex_resources();
           });
-    resActions.find('.caption').click(function(){open_resource_caps});                 
+    resActions.find('._caption').click(function(){open_resource_caps});                 
 
     resTab.find('a').click(function(){
       if (!(picker = resPicker).data('size-applied')){
@@ -125,7 +125,7 @@
   
     textarea.after($(res_caption_html));
     textarea.parent().dialog({
-       title: "<%= I18n.t('refinery.js.admin.page_images.add_caption') %>"
+       title: "<%= I18n.t('refinery.js.admin.page_resources.add_caption') %>"
        , modal: true
        , resizable: false
        , autoOpen: true
