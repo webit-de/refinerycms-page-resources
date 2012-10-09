@@ -4,6 +4,6 @@ module Refinery
 
     config_accessor :captions
 
-    self.captions = false
+    self.captions = true
   end
 end

@@ -2,8 +2,8 @@ module Refinery
   module PageResources
     module Extension
       def has_many_page_resources
-        has_many :resource_pages, :as => :page, :order => 'position ASC'
-        has_many :resources, :through => :resource_pages, :order => 'position ASC'
+        has_many :page_resources, :as => :page, :order => 'position ASC'
+        has_many :resources, :through => :page_resources, :order => 'position ASC'
         # accepts_nested_attributes_for MUST come before def resources_attributes=
         # this is because resources_attributes= overrides accepts_nested_attributes_for.
 
@@ -13,33 +13,33 @@ module Refinery
         # deletes an already defined resources_attributes
         module_eval do
           def resources_attributes=(data)
-            ids_to_keep = data.map{|i, d| d['resource_page_id']}.compact
+            ids_to_keep = data.map{|i, d| d['page_resource_id']}.compact
 
-            resource_pages_to_delete = if ids_to_keep.empty?
-              self.resource_pages
+            page_resources_to_delete = if ids_to_keep.empty?
+              self.page_resources
             else
-              self.resource_pages.where(
-                Refinery::ResourcePage.arel_table[:id].not_in(ids_to_keep)
+              self.page_resources.where(
+                Refinery::PageResource.arel_table[:id].not_in(ids_to_keep)
               )
             end
 
-            resource_pages_to_delete.destroy_all
+            page_resources_to_delete.destroy_all
 
             data.each do |i, resource_data|
-              resource_page_id, resource_id, caption =
-                resource_data.values_at('resource_page_id', 'id', 'caption')
+              page_resource_id, resource_id, caption =
+                resource_data.values_at('page_resource_id', 'id', 'caption')
 
               next if resource_id.blank?
 
-              resource_page = if resource_page_id.present?
-                self.resource_pages.find(resource_page_id)
+              page_resource = if page_resource_id.present?
+                self.page_resources.find(page_resource_id)
               else
-                self.resource_pages.build(:resource_id => resource_id)
+                self.page_resources.build(:resource_id => resource_id)
               end
 
-              resource_page.position = i
-              resource_page.caption = caption if Refinery::PageResources.captions
-              resource_page.save
+              page_resource.position = i
+              page_resource.caption = caption if Refinery::PageResources.captions
+              page_resource.save
             end
           end
         end
@@ -52,11 +52,11 @@ module Refinery
       module InstanceMethods
 
         def caption_for_resource_index(index)
-          self.resource_pages[index].try(:caption).presence || ""
+          self.page_resources[index].try(:caption).presence || ""
         end
 
-        def resource_page_id_for_resource_index(index)
-          self.resource_pages[index].try(:id)
+        def page_resource_id_for_resource_index(index)
+          self.page_resources[index].try(:id)
         end
       end
     end

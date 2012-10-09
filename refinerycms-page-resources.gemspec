@@ -1,12 +1,12 @@
 Gem::Specification.new do |s|
   s.name              = %q{refinerycms-page-resources}
-  s.version           = %q{0.0.1}
+  s.version           = %q{0.0.2}
   s.description       = %q{Page Resources Engine for Refinery CMS}
   s.date              = Date.today.strftime("%Y-%m-%d")
   s.summary           = %q{Page Resources Engine for Refinery CMS}
-  s.email             = %q{stas.ladonenko@gmail.com}
+  s.email             = %q{anita@joli.com.au}
   s.homepage          = %q{http://github.com/stasl/refinerycms-page-resources}
-  s.authors           = ['Stas Ladonenko']
+  s.authors           = ['Stas Ladonenko, Anita Graham']
   s.require_paths     = %w(lib)
 
   s.files             = `git ls-files`.split("\n")

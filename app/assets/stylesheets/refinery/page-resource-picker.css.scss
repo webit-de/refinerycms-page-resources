@@ -4,9 +4,10 @@
   width: 280px;
   width: 100%;
   li {
-    position: relative;
+    // position: relative;
     list-style: none;
-    float: left;
+    // float: left;
+    background-color:#808080;
     margin: 10px 20px 20px 0;
     * {
       cursor: move;
@@ -14,13 +15,9 @@
     &.odd {
       margin-right: 18px;
     }
-    .resource_actions {
-      background: white;
-      position: absolute;
-      padding: 3px;
-      left: 0;
-      top: 0;
-      width: 135px;
+    span.actions {
+      float:right;
+     
       * {
         cursor: pointer;
       }
@@ -33,6 +30,13 @@
     position: absolute;
     right: 3px;
     top: 3px;
+  }
+  > li a {
+    // display:block;
+    // background-color: blue;
+    // color:white;
+    // padding:3px;
+    // border-radius:10px;
   }
 }
 

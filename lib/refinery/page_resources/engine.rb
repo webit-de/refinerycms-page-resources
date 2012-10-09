@@ -23,8 +23,8 @@ module Refinery
         require 'refinerycms-pages'
         Refinery::Page.send :has_many_page_resources
         Refinery::Blog::Post.send :has_many_page_resources if defined?(::Refinery::Blog)
-        Refinery::Image.module_eval do
-          has_many :image_pages, :dependent => :destroy
+        Refinery::Resource.module_eval do
+          has_many :page_resources, :dependent => :destroy
         end
       end
 
