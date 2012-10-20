@@ -2,7 +2,7 @@ source "http://rubygems.org"
 
 gemspec
 
-gem 'refinerycms', :git => 'git://github.com/resolve/refinerycms.git'
+gem 'refinerycms' #, :git => 'git://github.com/resolve/refinerycms.git'
 
 group :development, :test do
   gem 'refinerycms-testing', :git => 'git://github.com/resolve/refinerycms.git'
