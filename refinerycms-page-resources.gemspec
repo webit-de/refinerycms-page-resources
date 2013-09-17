@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name              = %q{refinerycms-page-resources}
   s.version           = %q{0.0.2}
-  s.description       = %q{Page Resources Engine for Refinery CMS}
+  s.description       = %q{Page Resources Engine for Refinery CMS}  
   s.summary           = %q{Page Resources Engine for Refinery CMS}
   s.email             = %q{anita@joli.com.au}
   s.homepage          = %q{http://github.com/stasl/refinerycms-page-resources}
