@@ -2,11 +2,20 @@ source "http://rubygems.org"
 
 gemspec
 
-gem 'refinerycms' #, :git => 'git://github.com/resolve/refinerycms.git'
+gem 'refinerycms'
 
 group :development, :test do
-  gem 'refinerycms-testing', :git => 'git://github.com/resolve/refinerycms.git'
-  gem 'guard-rspec', '~> 0.6.0'
+  gem 'refinerycms-testing', '~> 2.1.0'
+  gem 'factory_girl_rails'
+  gem 'generator_spec'
+
+  gem 'guard-rspec'
+  gem 'ffi'
+  gem 'guard-bundler'
+  gem 'fakeweb'
+  gem 'libnotify' if  RUBY_PLATFORM =~ /linux/i
+
+  require 'rbconfig'
 
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter'
