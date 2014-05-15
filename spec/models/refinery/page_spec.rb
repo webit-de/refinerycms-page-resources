@@ -2,68 +2,27 @@ require 'spec_helper'
 
 module Refinery
   describe Page do
-    it "can have resources added" do
-      page = Factory(:page)
-      page.resources.count.should eq(0)
-
-      page.resources << Factory(:resource)
-      page.resources.count.should eq(1)
+    let(:page) {FactoryGirl.create(:page)}
+    let(:resources) {FactoryGirl.create_list(:resource, 2)}
+    before do
+      page.resources << resources.first
     end
 
-    describe "#resources_attributes=" do
-      it "adds resources" do
-        page = Factory(:page)
-        resource = Factory(:resource)
+    it "accepts resources being linked to it" do
+      expect(page.resources.count).to eq(1)
+    end
 
-        page.resources.count.should == 0
-        page.update_attributes({:resources_attributes => {"0" => {"id" => resource.id}}})
+    it 'is linked to the resource' do
+      expect(page.resources.first.id).to eq(resources[0].id)
+    end
 
-        page.resources.count.should == 1
-      end
+    it 'deletes a link to a resource' do
 
-      it "deletes specific resources" do
-        page = Factory(:page)
-        resources = [Factory(:resource), Factory(:resource)]
-        page.resources = resources
+    end
 
-        page.update_attributes(:resources_attributes => {
-          "0" => {
-            "id" => resources.first.id.to_s,
-            "resource_page_id" => page.resource_pages.first.id,
-          },
-        })
+    it 'deletes all resource links' do
 
-        page.resources.should eq([resources.first])
-      end
-
-      it "deletes all resources" do
-        page = Factory(:page)
-        resources = [Factory(:resource), Factory(:resource)]
-        page.resources = resources
-
-        page.update_attributes(:resources_attributes => {"0" => {"id"=>""}})
-
-        page.resources.should be_empty
-      end
-
-      it "reorders resources" do
-        page = Factory(:page)
-        resources = [Factory(:resource), Factory(:resource)]
-        page.resources = resources
-
-        page.update_attributes(:resources_attributes => {
-          "0" => {
-            "id" => resources.second.id,
-            "resource_page_id" => page.resource_pages.second.id,
-          },
-          "1" => {
-            "id" => resources.first.id,
-            "resource_page_id" => page.resource_pages.first.id,
-          },
-        })
-
-        page.resources.should eq([resources.second, resources.first])
-      end
     end
   end
+
 end

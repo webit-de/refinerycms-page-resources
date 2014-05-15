@@ -2,11 +2,12 @@ source "http://rubygems.org"
 
 gemspec
 
-gem 'refinerycms'
+gem 'refinerycms', '~>2.1.0'
+gem 'refinerycms-pages', '~>2.1.0'
 
 group :development, :test do
   gem 'refinerycms-testing', '~> 2.1.0'
-  gem 'factory_girl_rails'
+  gem 'factory_girl_rails', :require=>false
   gem 'generator_spec'
 
   gem 'guard-rspec'
