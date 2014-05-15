@@ -18,6 +18,7 @@ module Refinery
 
     it 'deletes a link to a resource' do
 
+
     end
 
     it 'deletes all resource links' do
