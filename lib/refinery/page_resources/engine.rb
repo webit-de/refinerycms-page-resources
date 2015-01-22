@@ -1,3 +1,5 @@
+require 'refinery/page_resources/configuration'
+
 module Refinery
   module PageResources
     class Engine < Rails::Engine
@@ -8,38 +10,35 @@ module Refinery
       engine_name :refinery_page_resources
 
       def self.register(tab)
-        tab.name = "resources"
+        tab.name = ::I18n.t(:'refinery.plugins.refinery_page_resources.tab_name')
         tab.partial = "/refinery/admin/pages/tabs/resources"
       end
 
-      initializer "register refinery_page_resources plugin" do
+      def self.initialize_tabs!
+        PageResources.config.enabled_tabs.each do |tab_class_name|
+          unless (tab_class = tab_class_name.safe_constantize)
+            Rails.logger.warn "PageResources is unable to find tab class: #{tab_class_name}"
+            next
+          end
+          tab_class.register { |tab| register tab }
+        end
+      end
+
+      before_inclusion do
         Refinery::Plugin.register do |plugin|
-          plugin.name = "page_resources"
+          plugin.name = 'page_resources'
+          plugin.pathname = root
           plugin.hide_from_menu = true
         end
       end
 
       config.to_prepare do
-        require 'refinerycms-pages'
-        Refinery::Page.send :has_many_page_resources
-        Refinery::Blog::Post.send :has_many_page_resources if defined?(::Refinery::Blog)
-        Refinery::Resource.module_eval do
-          has_many :page_resources, :dependent => :destroy
-        end
+        Refinery::PageResources.attach!
       end
 
       config.after_initialize do
-        Refinery::Pages::Tab.register do |tab|
-          register tab
-        end
-
-        if defined?(Refinery::Blog::Tab)
-          Refinery::Blog::Tab.register do |tab|
-            register tab
-          end
-        end
-
-        Refinery.register_engine(Refinery::PageResources)
+        initialize_tabs!
+        Refinery.register_engine Refinery::PageResources
       end
     end
   end

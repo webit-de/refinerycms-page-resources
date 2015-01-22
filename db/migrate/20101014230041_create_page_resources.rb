@@ -1,6 +1,6 @@
 class CreatePageResources < ActiveRecord::Migration
   def change
-    create_table :refinery_page_resources do |t|
+    create_table :refinery_page_resources, :id => false do |t|
       t.integer :resource_id
       t.integer :page_id
       t.integer :position

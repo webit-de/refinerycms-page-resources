@@ -4,10 +4,8 @@
   width: 280px;
   width: 100%;
   li {
-    // position: relative;
+    position: relative;
     list-style: none;
-    // float: left;
-    background-color:#808080;
     margin: 10px 20px 20px 0;
     * {
       cursor: move;
@@ -15,9 +13,15 @@
     &.odd {
       margin-right: 18px;
     }
-    span.actions {
-      float:right;
-     
+    .title {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .resource_actions {
+      background: white;
+      display: inline-block;
+      vertical-align: middle;
+      height: 16px;
       * {
         cursor: pointer;
       }
@@ -25,18 +29,6 @@
         background: transparent;
       }
     }
-  }
-  > li .resource_actions img.caption {
-    position: absolute;
-    right: 3px;
-    top: 3px;
-  }
-  > li a {
-    // display:block;
-    // background-color: blue;
-    // color:white;
-    // padding:3px;
-    // border-radius:10px;
   }
 }
 
@@ -58,4 +50,10 @@ a#add_resource_link {
   display: inline;
   border-bottom: 0;
   background: image-url('refinery/icons/add.png') no-repeat 0px 6px;
+}
+
+.page-resources-caption-modal.plain {
+  textarea {
+    width: 400px;
+  }
 }
