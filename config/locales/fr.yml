@@ -1,16 +1,17 @@
 fr:
   refinery:
     plugins:
-      refinery_page_images:
-        title: Page Images
-        description: "Page Images vous permet de lier une ou plusieurs images à n'importe quelle page dans Refinery, cela vous permet de créer très facilement des galeries d'images qui peuvent s'afficher dans une lightbox ou popups pour le front end"
+      refinery_page_resources:
+        title: Page Resources
+        tab_name: Fichiers
+        description: "Page Resources vous permet de lier un ou plusieurs fichiers à n'importe quelle page dans Refinery CMS, cela vous permet de créer très facilement des listes de fichiers."
     js:
       admin:
-        page_images:
+        page_resources:
           add_caption: Ajouter une légende
-          done: Terminé  
+          done: Terminé
     admin:
       pages:
         tabs:
-          images_bar:
-            add: Ajouter une image
+          resources_bar:
+            add: Ajouter un fichier

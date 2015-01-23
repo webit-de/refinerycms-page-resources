@@ -1,46 +1,17 @@
-(function (refineryPicker, $, undefined) {
+<%# encoding: utf-8 %>
+var resource_added; // Global callback
+(function($) {
+  var reset_functionality, open_resource_caption, reindex_resources,
+      template_li, wysiwyg_enabled, input_type;
+  $(document).ready(function(){
+    var picker = $('#page_resource_picker');
+    input_type = picker.data('input-type');
+    wysiwyg_enabled = input_type == 'wym';
 
-     var collection,       // name for a collection
-        single,           // name for a singular
-        resTab,
-        resPicker;
-    var resCollection;
-    var resPrefix,
-        resActions,
-        res_caption_html;
-    
-//     the delete icon and the add caption icon
-    var actions =  "<img src='/assets/refinery/icons/delete.png' width='16' height='16' class='_delete' />" +
-                   "<img src='/assets/refinery/icons/user_comment.png' width='16' height='16' class='_caption' />";
-    var res_caption_html = "<div class='form-actions'><div class='form-actions-left'>" + 
-                           "<a class='button'><%= I18n.t('refinery.js.admin.page_resources.done') %></a></div></div>";
-    
-/*
- * ----------------------------------------------------
- * end of predefined items
- * ----------------------------------------------------
- */ 
-// Public init function
-  refineryPicker.init = function(resType) { 
-
-    collection = resType;
-    single = collection.slice(0,collection.length-1);
-    resTab = $('#custom_' + collection + '_tab');
-    resPicker = $('#page_' + single + '_picker');
-    resCollection = $('#page_' + collection);
-    resPrefix = collection + "_";
-    
-    resActions = $("<span></span>").addClass(single + ' actions').append(actions);
-    resActions.find('._delete').click(function() {
-            $(this).parents('li').first().remove();
-            reindex_resources();
-          });
-    resActions.find('._caption').click(function(){open_resource_caps(this)});                 
-
-    resTab.find('a').click(function(){
-      if (!(picker = resPicker).data('size-applied')){
-        wym_box = $('.page_part:first .wym_box');
-        iframe = $('.page_part:first iframe');
+    $('#custom_resources_tab a').click(function(){
+      if (!picker.data('size-applied') && wysiwyg_enabled){
+        var wym_box = $('.page_part:first .wym_box'),
+            iframe = $('.page_part:first iframe');
         picker.css({
           height: wym_box.height()
           , width: wym_box.width()
@@ -54,120 +25,44 @@
           , padding: '0px 10px 0px 10px'
         });
       }
-    });   //end of click function
+    });
 
+    // Webkit browsers don't like the textarea being moved around the DOM,
+    // they ignore the new contents. This is fixed below by adding a hidden
+    // field that stays in place.
+    $('#page_resources li textarea:hidden').each(function(index) {
+      var old_name = $(this).attr('name'),
+          $this = $(this);
+      $this.attr('data-old-id', $this.attr('id'));
+      $this.attr('name', 'ignore_me_' + index);
+      $this.attr('id', 'ignore_me_' + index);
 
-  /* Webkit browsers don't like the textarea being moved around the DOM,
-   * they ignore the new contents. This is fixed below by adding a hidden
-   * field that stays in place.
-   */
-  
-    resCollection.find('li textarea').filter(":hidden").each(function(index) {
-      var old_name = $(this).attr('name');
-      $(this).attr('data-old-id', $(this).attr('id'));
-      $(this).attr('name', resType+'ignore_me_' + index);
-      $(this).attr('id', resType + 'ignore_me_' + index);
-  
       var hidden = $('<input>')
                     .addClass('caption')
                     .attr('type', 'hidden')
                     .attr('name', old_name)
-                    .attr('id', $(this).attr('data-old-id'))
-                    .val($(this).val());
-  
-      $(this).parents('li').first().append(hidden);
-      
+                    .attr('id', $this.attr('data-old-id'))
+                    .val($this.val());
+
+      $this.parents('li').first().append(hidden);
     });
-    reset_edit_box();
-  } // end of Pinit 
 
-  refineryPicker.resource_added = function(resource) {
-    new_list_item = (current_list_item = $('li.empty_resource')).clone();
-    resource_id = $(resource).attr('id').replace(resPrefix, '');
-    current_list_item.find('input:hidden:first').val(resource_id);
+    reset_functionality();
 
-// each resource type should return suitable html
-    current_list_item.append(resource.html);   
-    current_list_item.attr('id', resPrefix + resource_id).removeClass('empty_resource');
-    new_list_item.appendTo($(resCollection));
-    reset_edit_box();
-  }
 
-  
-  reindex_resources = function() {
-    resCollection.find('li:not(.empty_resource) textarea:hidden').each(function(i, input){
-      // make the resource's name consistent with its position.
-      parts = $(input).attr('name').split('_');
-      parts[2] = ('' + i);
-      $(input).attr('name', parts.join('_'));
-  
-      // make the resourcess id consistent with its position.
-      $(input).attr('id', $(input).attr('id').replace(/_\d/, '_' + i));
-      $(input).attr('data-old-id', $(input).attr('data-old-id').replace(/_\d_/, '_'+i+'_').replace(/_\d/, '_' + i));
-    });
-    resCollection.find('li').each(function(i, li){
-      $('input:hidden', li).each(function() {
-        // make the resource's name consistent with its position.
-        parts = $(this).attr('name').split(']');
-        parts[1] = ('[' + i);
-        $(this).attr('name', parts.join(']'));
-  
-        // make the resource's id consistent with its position.
-        $(this).attr('id', $(this).attr('id').replace(/_\d_/, '_'+i+'_').replace(/_\d/, '_'+i));
-      })
-    })
-  } //end of reindex_resources
+    // Once the plugin has init'd everything, remove the template UI
+    $('.page-resources-caption-modal').hide();
+    template_li = $('#page_resources .js-page-resources-template').detach();
+  });
 
-  open_resource_caps = function(obj) {
-    icon = $(obj);
-    // move the textarea out of the list item, and then move the textarea back into it when we click done.
-    (list_item = icon.parents('li').first()).addClass('current_caption_list_item');
-    textarea = list_item.find('.textarea_wrapper_for_wym > textarea');
-  
-    textarea.after($(res_caption_html));
-    textarea.parent().dialog({
-       title: "<%= I18n.t('refinery.js.admin.page_resources.add_caption') %>"
-       , modal: true
-       , resizable: false
-       , autoOpen: true
-       , width: 928
-       , height: 530
-     });
-  
-    $('.ui-dialog:visible .ui-dialog-titlebar-close, .ui-dialog:visible .form-actions a.button')
-      .on('click',
-        $.proxy(function() {
-          
-          // first, update the editor because we're blocking event bubbling (third argument to bind set to false).
-          $(this).data('wymeditor').update();
-          $(this).removeClass('wymeditor')
-                 .removeClass('active_rotator_wymeditor');
-  
-          objParent = $(this).parent();
-          objParent.appendTo('li.current_caption_list_item').dialog('close').data('dialog', null);
-          objParent.find('.form-actions').remove();
-          objParent.find('.wym_box').remove();
-          objParent.css('height', 'auto');
-          objParent.removeClass('ui-dialog-content').removeClass('ui-widget-content');
-  
-          $('li.current_caption_list_item').removeClass('current_caption_list_item');
-  
-          $('.ui-dialog, .ui-widget-overlay:visible').remove();
-  
-          $('#' + $(this).attr('data-old-id')).val($(this).val());
-          console.log()
-        }, textarea)
-      );
-  
-    textarea.addClass('wymeditor active_rotator_wymeditor widest').wymeditor(wymeditor_boot_options);
-  }      
+  reset_functionality = function() {
+    if(wysiwyg_enabled) {
+      WYMeditor.onload_functions.push(function(){
+        $('.wym_box').css({'width':null});
+      });
+    }
 
-  reset_edit_box = function() {
-    WYMeditor.onload_functions.push(function(){
-      $('.wym_box').css({'width':null});
-    });
-  
-    resCollection.sortable({
+    $("#page_resources").sortable({
       'tolerance': 'pointer'
       , 'placeholder': 'placeholder'
       , 'cursor': 'drag'
@@ -175,26 +70,116 @@
       , stop: reindex_resources
     });
 
-    /*
-     * Add actions to each resource. Don't fuss with the hovering bit right now.
-     */
-    resCollection.find('li:not(.empty_resource)').each(function(){
-      if ($(this).find('.actions').length == 0) {
-        resActions.clone(true, true).prependTo(this)
+    $('#page_resources').on('mouseenter mouseleave', 'li', function(e) {
+      var $this = $(this),
+          resource_actions = $this.find('.resource_actions');
+      if (e.type == 'mouseenter') {
+        if (resource_actions.length == 0) {
+          resource_actions = $("<div class='resource_actions'></div>");
+          var img_delete = $("<img src='<%= image_path('refinery/icons/delete.png') %>' width='16' height='16' />");
+          img_delete.appendTo(resource_actions);
+          img_delete.click(function() {
+            $(this).parents('li').first().remove();
+            reindex_resources();
+          });
+
+          if ($this.find('textarea.page_caption').length > 0) {
+            var img_caption = $("<img src='<%= image_path('refinery/icons/user_comment.png') %>' width='16' height='16' class='caption' />");
+            img_caption.appendTo(resource_actions);
+            img_caption.click(open_resource_caption);
+          } else {
+            resource_actions.addClass('no_captions');
+          }
+
+          resource_actions.appendTo($this);
+        }
+
+        resource_actions.show();
+      } else if (e.type == 'mouseleave') {
+        resource_actions.hide();
       }
-    })
+    });
 
-  reindex_resources();
-  }   // end of reset_edit_box
-  /*
-   * ----------------------------------------------------
-   */  
-   // return {
-     // init: Pinit()
-   // }
+    reindex_resources();
+  };
 
-})( window.refineryPicker = window.refineryPicker || {}, jQuery );
+  resource_added = function(resource) {
+    var current_list_item = template_li.clone(),
+        resource_id = $(resource).attr('id').replace('resource_', '');
+    current_list_item.find('input:hidden:first').val(resource_id);
 
-$(document).ready(function(){ 
-  refineryPicker.init( "resources") 
-})
+    current_list_item.append(resource.html);
+    current_list_item.attr('id', 'resource_' + resource_id).removeClass('empty');
+
+    current_list_item.appendTo($('#page_resources'));
+    reset_functionality();
+  };
+
+  open_resource_caption = function(e) {
+    var list_item = $(this).closest('li'),
+        textarea = list_item.find('.page-resources-caption-modal > textarea'),
+        textarea_wrapper = textarea.parent(),
+        modal_size = {
+          textarea: { width: 400, height: 'auto' },
+          wym: { width: 928, height: 530 }
+        };
+
+    textarea_wrapper.find('.js-page-resources-done').on('click', function() {
+      textarea_wrapper.dialog("close");
+    });
+
+    var close_handler = function() {
+      if(wysiwyg_enabled) {
+        textarea.data('wymeditor').update();
+      }
+
+      $('li.current_caption_list_item').removeClass('current_caption_list_item');
+      $('#' + textarea.attr('data-old-id')).val(textarea.val());
+      textarea_wrapper.dialog('destroy');
+    };
+
+    // move the textarea out of the list item, and then move the textarea back into it when we click done.
+    list_item.addClass('current_caption_list_item');
+    textarea_wrapper.dialog({
+      title: "<%= I18n.t('refinery.js.admin.page_resources.add_caption') %>"
+      , modal: true
+      , resizable: false
+      , autoOpen: true
+      , width: modal_size[input_type].width
+      , height: modal_size[input_type].height
+      , close: close_handler
+    });
+
+    if(wysiwyg_enabled) {
+      textarea.addClass('wymeditor active_rotator_wymeditor widest').wymeditor(wymeditor_boot_options);
+    }
+    else {
+      textarea.show();
+    }
+  };
+
+  reindex_resources = function() {
+    $('#page_resources li textarea:hidden').each(function(i, input){
+      // make the resource's name consistent with its position.
+      var parts = $(input).attr('name').split('_');
+      parts[2] = ('' + i);
+      $(input).attr('name', parts.join('_'));
+
+      // make the resource's id consistent with its position.
+      $(input).attr('id', $(input).attr('id').replace(/_\d/, '_' + i));
+      $(input).attr('data-old-id', $(input).attr('data-old-id').replace(/_\d_/, '_'+i+'_').replace(/_\d/, '_' + i));
+    });
+    $('#page_resources li').each(function(i, li){
+      $('input:hidden', li).each(function() {
+        var $this = $(this);
+        // make the resource's name consistent with its position.
+        var parts = $this.attr('name').split(']');
+        parts[1] = ('[' + i);
+        $this.attr('name', parts.join(']'));
+
+        // make the resource's id consistent with its position.
+        $this.attr('id', $this.attr('id').replace(/_\d_/, '_'+i+'_').replace(/_\d/, '_'+i));
+      });
+    });
+  }
+})(jQuery);

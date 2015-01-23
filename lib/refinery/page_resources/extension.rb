@@ -2,8 +2,8 @@ module Refinery
   module PageResources
     module Extension
       def has_many_page_resources
-        has_many :page_resources, :as => :page, :order => 'position ASC'
-        has_many :resources, :through => :page_resources, :order => 'position ASC'
+        has_many :page_resources, proc { order('position ASC') }, :as => :page, :class_name => 'Refinery::PageResource'
+        has_many :resources, proc { order('position ASC') }, :through => :page_resources, :class_name => 'Refinery::Resource'
         # accepts_nested_attributes_for MUST come before def resources_attributes=
         # this is because resources_attributes= overrides accepts_nested_attributes_for.
 
@@ -13,14 +13,13 @@ module Refinery
         # deletes an already defined resources_attributes
         module_eval do
           def resources_attributes=(data)
-            ids_to_keep = data.map{|i, d| d['page_resource_id']}.compact
+            data = data.reject {|_, data| data.blank?}
+            ids_to_keep = data.map{|_, d| d['page_resource_id']}.compact
 
             page_resources_to_delete = if ids_to_keep.empty?
               self.page_resources
             else
-              self.page_resources.where(
-                Refinery::PageResource.arel_table[:id].not_in(ids_to_keep)
-              )
+              self.page_resources.where.not(:id => ids_to_keep)
             end
 
             page_resources_to_delete.destroy_all
@@ -45,8 +44,6 @@ module Refinery
         end
 
         include Refinery::PageResources::Extension::InstanceMethods
-
-        attr_accessible :resources_attributes
       end
 
       module InstanceMethods
