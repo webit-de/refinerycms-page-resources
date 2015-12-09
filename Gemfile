@@ -2,11 +2,11 @@ source "http://rubygems.org"
 
 gemspec
 
-gem 'refinerycms' #, :git => 'git://github.com/resolve/refinerycms.git'
+gem 'refinerycms', git: 'https://github.com/refinery/refinerycms'
 
 group :development, :test do
-  gem 'refinerycms-testing', :git => 'git://github.com/resolve/refinerycms.git'
-  gem 'guard-rspec', '~> 0.6.0'
+  gem 'refinerycms-testing', :git => 'git://github.com/refinery/refinerycms.git'
+  gem 'guard-rspec', '~> 4.6.4'
 
   platforms :jruby do
     gem 'activerecord-jdbcsqlite3-adapter'
@@ -28,7 +28,7 @@ group :development, :test do
   end
 
   platforms :ruby do
-    gem 'spork', '~> 0.9.0.rc'
+    gem 'spork', '~> 0.9.2'
     gem 'guard-spork'
 
     unless ENV['TRAVIS']

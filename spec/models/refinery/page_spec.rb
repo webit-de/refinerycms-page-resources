@@ -3,17 +3,17 @@ require 'spec_helper'
 module Refinery
   describe Page do
     it "can have resources added" do
-      page = Factory(:page)
+      page = FactoryGirl.create(:page)
       page.resources.count.should eq(0)
 
-      page.resources << Factory(:resource)
+      page.resources << FactoryGirl.create(:resource)
       page.resources.count.should eq(1)
     end
 
     describe "#resources_attributes=" do
       it "adds resources" do
-        page = Factory(:page)
-        resource = Factory(:resource)
+        page = FactoryGirl.create(:page)
+        resource = FactoryGirl.create(:resource)
 
         page.resources.count.should == 0
         page.update_attributes({:resources_attributes => {"0" => {"id" => resource.id}}})
@@ -22,14 +22,14 @@ module Refinery
       end
 
       it "deletes specific resources" do
-        page = Factory(:page)
-        resources = [Factory(:resource), Factory(:resource)]
+        page = FactoryGirl.create(:page)
+        resources = [FactoryGirl.create(:resource), FactoryGirl.create(:resource)]
         page.resources = resources
 
         page.update_attributes(:resources_attributes => {
           "0" => {
             "id" => resources.first.id.to_s,
-            "resource_page_id" => page.resource_pages.first.id,
+            "resource_page_id" => page.page_resources.first.id,
           },
         })
 
@@ -37,8 +37,8 @@ module Refinery
       end
 
       it "deletes all resources" do
-        page = Factory(:page)
-        resources = [Factory(:resource), Factory(:resource)]
+        page = FactoryGirl.create(:page)
+        resources = [FactoryGirl.create(:resource), FactoryGirl.create(:resource)]
         page.resources = resources
 
         page.update_attributes(:resources_attributes => {"0" => {"id"=>""}})
@@ -47,18 +47,18 @@ module Refinery
       end
 
       it "reorders resources" do
-        page = Factory(:page)
-        resources = [Factory(:resource), Factory(:resource)]
+        page = FactoryGirl.create(:page)
+        resources = [FactoryGirl.create(:resource), FactoryGirl.create(:resource)]
         page.resources = resources
 
         page.update_attributes(:resources_attributes => {
           "0" => {
             "id" => resources.second.id,
-            "resource_page_id" => page.resource_pages.second.id,
+            "resource_page_id" => page.page_resources.second.id,
           },
           "1" => {
             "id" => resources.first.id,
-            "resource_page_id" => page.resource_pages.first.id,
+            "resource_page_id" => page.page_resources.first.id,
           },
         })
 
