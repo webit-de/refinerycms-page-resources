@@ -18,7 +18,7 @@ Page Resources allows you to relate one or more resources to any page in Refiner
 Add this line to your applications `Gemfile`
 
 ```ruby
-gem 'refinerycms-page-resources'
+gem 'refinerycms-page-resources', github: 'anitagraham/refinerycms-page-resources', branch: 'master'
 ```
 
 Next run
