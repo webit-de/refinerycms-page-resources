@@ -4,7 +4,7 @@ en:
       refinery_page_resources:
         title: Page Resources
         tab_name: Resources
-        description: Page Resources allows you to relate one or more resources (files) to any page in Refinery which makes it really easy for you to create simple resource galleries with lightbox style popups on the front end page views.
+        description: Page Resources allows you to relate one or more resources (files) to any page in Refinery.
     js:
       admin:
         page_resources:
