@@ -7,11 +7,6 @@ script:
   - "bin/rspec spec"
 notifications:
   email: true
-  irc:
-    use_notice: true
-    skip_join: true
-    channels:
-      - "irc.freenode.org#refinerycms"
   campfire:
     on_success: always
     on_failure: always
@@ -23,7 +18,7 @@ env:
   - DB=postgresql
   - DB=mysql
 rvm:
+  - 2.3
   - 2.2
   - 2.1
-  - 2.0.0
 sudo: false
