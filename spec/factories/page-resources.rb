@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :page_with_resource, :parent => :page do
     after_create { |p| p.resources << Factory(:resource) }
   end
