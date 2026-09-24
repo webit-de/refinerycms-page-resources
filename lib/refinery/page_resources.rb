@@ -16,7 +16,6 @@ module Refinery
       end
 
       def attach!
-        require 'refinery/page'
         require 'refinery/page_resources/extension'
 
         config.enabled_models.each do |model_class_name|
